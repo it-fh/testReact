@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <button onclick="push('/a')">/a</button>
+  <button onclick="push('/b')">/b</button>
+  <button onclick="push('/c')">/c</button>
+  <script>
+    window.onpopstate = function (e) {
+      root.innerHTML = e.state.to
+    }
+    // 没有onpushstate方法，自己实现
+    window.onpushstate = function (state, title, url) {
+      root.innerHTML = state.to || url;
+    }
+    let oldPushState = window.history.pushState;
+    window.history.pushState = function (state, title, url) {
+      window.onpushstate(state, title, url);
+      oldPushState.call(window.history, state, title, url);
+    }
+
+    function push(to) {
+      window.history.pushState({
+        to
+      }, null, to); //p1 描述对象 p2 标题(废弃) p3 push指定路径
+    }
+  </script>
+</body>
+
+</html>
